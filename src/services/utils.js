@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 import config from "../config.js";
 
@@ -24,4 +25,22 @@ export const verifyRequired = (required) => {
           required,
         });
   };
+};
+
+const PRIVATE_KEY = config.SECRET;
+
+export const generateToken = (user) => {
+  const token = jwt.sign({ user }, PRIVATE_KEY, { expiresIn: "24h" });
+  return token;
+};
+export const authThoken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).sene({ error: "No autenticado" });
+
+  const token = authHeader.split("")[1];
+  jwt.verify(token, PRIVATE_KEY, (error, credentials) => {
+    if (error) return res.status(403).send({ error: "No autorizado" });
+    req.user = credentials.user;
+    next();
+  });
 };

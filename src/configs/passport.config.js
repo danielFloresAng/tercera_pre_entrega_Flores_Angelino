@@ -45,31 +45,21 @@ const initializePassport = () => {
       },
       async (req, accessToken, refreshToken, profile, done) => {
         try {
-          const email = profile._json?.email || null;
+          console.log(profile);
+          const user = await manager.getUser({ email: profile._json.email });
 
-          // Necesitamos que en el profile haya un email
-          if (email) {
-            // Tratamos de ubicar en NUESTRA base de datos un usuario
-            // con ese email, si no está lo creamos y lo devolvemos,
-            // si ya existe retornamos directamente esos datos
-            const foundUser = await manager.getOne({ email: email });
-
-            if (!foundUser) {
-              const user = {
-                firstName: profile._json.name.split(" ")[0],
-                lastName: profile._json.name.split(" ")[1],
-                email: email,
-                password: "none",
-              };
-
-              const process = await manager.add(user);
-
-              return done(null, process);
-            } else {
-              return done(null, foundUser);
-            }
+          if (!user) {
+            let newUser = {
+              firstName: profile._json.name,
+              lastName: "",
+              email: profile._json.email,
+              password: "",
+              role: "",
+            };
+            let result = await manager.addUser(newUser)
+            done(null, result)
           } else {
-            return done(new Error("Faltan datos de perfil"), null);
+            done(null, user)
           }
         } catch (err) {
           return done(err, false);
@@ -83,7 +73,7 @@ const initializePassport = () => {
   });
 
   passport.deserializeUser((user, done) => {
-    let user = userManager.get
+    let user = userManager.get;
     done(null, user);
   });
 };

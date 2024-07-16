@@ -126,19 +126,13 @@ router.post(
 );
 // Ruta de autenticación con git hub
 router.get(
-  "/ghlogin",
-  passport.authenticate("ghlogin", { scope: ["user"] }),
-  async (req, res) => {
-    // try {
-    //   res.status(200).send({ origin: config.SERVER, playload: "PUT" });
-    // } catch (error) {
-    //   res.status(500).send({ status: "Error", playload: error.message });
-    // }
-  }
+  "/github",
+  passport.authenticate("github", { scope: ["user: email"] }),
+  async (req, res) => {}
 );
 router.get(
   "/ghlogincallback",
-  passport.authenticate("ghlogin", {
+  passport.authenticate("github", {
     failureRedirect: `/login?error=${encodeURI(
       "Error al identificar con Github"
     )}`,
