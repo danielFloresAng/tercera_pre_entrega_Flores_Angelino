@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import passport from "passport";
 
 import config from "../config.js";
 
@@ -43,4 +44,25 @@ export const authThoken = (req, res, next) => {
     req.user = credentials.user;
     next();
   });
+};
+export const passportCall = (strategy) => {
+  return async (req, res, next) => {
+    passport.authenticate(strategy, function (error, user, info) {
+      if (error) return next(error);
+      if (!user) {
+        return res
+          .status(401)
+          .send({ error: info.messages ? info.messages : info.toString() });
+      }
+      req.user = user;
+      next();
+    });
+    req, res, next;
+  };
+};
+export const authorization = (role) => {
+  if (!req.user) return res.status(401).send({ error: "No autorizado" });
+  if (req.user.role != role)
+    return res.status(403).send({ error: "Sin permisos válidos" });
+  next()
 };

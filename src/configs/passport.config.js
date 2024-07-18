@@ -1,13 +1,24 @@
 import passport from "passport";
 import local from "passport-local";
 import GitHubStrategy from "passport-github2";
+import jwt from "passport-jwt";
 
 import { isValidPass } from "../services/utils.js";
 import config from "../config.js";
 import userManager from "../controllers/usersManagaerMdb.js";
 
 const LocalStrategy = local.Strategy;
+const JWTStrategy = jwt.Strategy;
+const ExtractJWT = jwt.ExtractJwt;
 const manager = new userManager();
+
+const cookieExtractor = (req) => {
+  let token = null;
+  if (req && req.cookies) {
+    token = req.cookies[JSON.stringify(req.body.email)];
+  }
+  return token;
+};
 
 const initializePassport = () => {
   // ---------> Estrategia local
@@ -56,10 +67,10 @@ const initializePassport = () => {
               password: "",
               role: "",
             };
-            let result = await manager.addUser(newUser)
-            done(null, result)
+            let result = await manager.addUser(newUser);
+            done(null, result);
           } else {
-            done(null, user)
+            done(null, user);
           }
         } catch (err) {
           return done(err, false);
@@ -67,7 +78,25 @@ const initializePassport = () => {
       }
     )
   );
-  // ---------> serial y desSerial
+
+  // ---------> Estrategia JWT
+  passport.use(
+    "jwt",
+    new JWTStrategy(
+      {
+        jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
+        secretOrKey: config.SECRET,
+      },
+      async (jwt_playload, done) => {
+        try {
+          return done(null, jwt_playload);
+        } catch (error) {
+          return done(error);
+        }
+      }
+    )
+  );
+  // ---------> serial y deSerial
   passport.serializeUser((user, done) => {
     done(null, user._id);
   });
