@@ -1,7 +1,13 @@
 import { Router, json } from "express";
 
 import config from "../config.js";
-import { generateToken, authThoken, passportCall, authorization } from "../services/utils.js";
+import {
+  generateToken,
+  authThoken,
+  passportCall,
+  authorization,
+  handlePolicies,
+} from "../services/utils.js";
 import { createHash } from "../services/utils.js";
 import UserManager from "../controllers/usersManagaerMdb.js";
 
@@ -79,12 +85,39 @@ router.post("/loginJwt", async (req, res) => {
 });
 
 // -----> LOG IN CON JWT
-router.get("/currentJwt", authThoken, passportCall("jwt"),authorization('user'), async (req, res) => {
-  try {
-    res.status(200).send({ status: "Ingreso exitoso", playload: req.user });
-  } catch (error) {
-    res.status(400).send({ origin: config.SERVER, error: error.message });
+router.get(
+  "/currentJwt",
+  authThoken,
+  passportCall("jwt"),
+  authorization("user"),
+  async (req, res) => {
+    try {
+      res.status(200).send({ status: "Ingreso exitoso", playload: req.user });
+    } catch (error) {
+      res.status(400).send({ origin: config.SERVER, error: error.message });
+    }
   }
-});
+);
+
+router.get(
+  "/admin",
+  authThoken,
+  handlePolicies(["admin"]),
+  async (req, res) => {
+    try {
+      res.status(200).send({ origin: config.SERVER, playload: "Message" });
+    } catch (error) {
+      res.status(500).send({ origin: config.SERVER, Error: "Error" });
+    }
+  }
+);
+// router.get('',async(req,res)=>{
+//   try{
+//     res.status(200).send({origin: config.SERVER, playload:'Message'})
+//   }catch(error){
+
+//     res.status(500).send({origin: config.SERVER, Error:'Error'})
+//   }
+// })
 
 export default router;

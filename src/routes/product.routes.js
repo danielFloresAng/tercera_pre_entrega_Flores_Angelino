@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import productManagerMdb from "../controllers/productManagerMdb.js";
 import config from "../config.js";
+import router from "./auth.routes.js";
 
 const productsRouter = Router();
 const manager = new productManagerMdb();
@@ -56,17 +57,24 @@ productsRouter.get("/", async (req, res) => {
   }
 });
 
-/*
----> Se deberá poder buscar productos por categoría o por disponibilidad, y se deberá poder realizar un ordenamiento de estos productos de manera ascendente o descendente por precio.
-*/
 //GET para filtrar productos por ID
 productsRouter.get("/:pid", async (req, res) => {
   let id = req.params.pid;
+  const text = config.MONGODB_ID_REGEX.test(id);
 
   try {
-    const filter = await manager.getProductsById(id);
-
-    res.status(200).send({ origin: config.SERVER, playload: filter });
+    if (text) {
+      const filter = await manager.getProductsById(id);
+      res.status(200).send({ origin: config.SERVER, playload: filter });
+    } else {
+      res
+        .status(200)
+        .send({
+          origin: config.SERVER,
+          playload: null,
+          error: "ID de producto no válido",
+        });
+    }
   } catch (error) {
     res.status(500).send({ origin: config.SERVER, error: error.message });
   }
@@ -113,6 +121,12 @@ productsRouter.delete("/deleteProduct/:pid", async (req, res) => {
   } catch (error) {
     res.status(500).send({ origin: config.SERVER, error: error.message });
   }
+});
+
+router.all("*", async (req, res) => {
+  res
+    .status(404)
+    .send({ origin: config.SERVER, error: "No se encuentra la ruta" });
 });
 
 export default productsRouter;
