@@ -3,25 +3,25 @@ import { createHash } from "../services/utils.js";
 
 const service = new UserService();
 
-class userDTO {
-  constructor(data) {
-    this.data = data;
+class UserDTO {
+  constructor(userData) {
+    this.data = userData;
     this.data.lastName = this.data.lastName.toUpperCase();
     this.data.password = createHash(this.data.password);
     this.data.orders = [];
   }
 }
 
-const normalize = new userDTO(data);
+// const normalize = new userDTO(userData);
 
 class UserManager {
-  constructor() {
-    this.users = usersModel;
+  constructor(user) {
+    this.users = user;
   }
 
   getUser = async (filter) => {
     try {
-      return await service.get();
+      return await service.get(filter);
     } catch (error) {
       return error.message;
     }
@@ -34,11 +34,19 @@ class UserManager {
     }
   };
 
-  addUser = async (firstName, lastName, email, password) => {
+  addUser = async (newData) => {
     try {
-      return await service.add(normalize.data);
+      const normalize = new UserDTO(newData);
+      return await service.add(normalize.userData);
     } catch (error) {
       return error.message;
+    }
+  };
+  updateUserData = async (filter, update, options) => {
+    try {
+      return await service.update(filter, update, options);
+    } catch (err) {
+      return err.message;
     }
   };
 

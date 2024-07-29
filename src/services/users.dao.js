@@ -5,9 +5,9 @@ class UserService {
     this.model = usersModel;
   }
 
-  get = async () => {
+  get = async (filter) => {
     try {
-      return await this.model.find().lean();
+      return await this.model.find(filter).lean();
     } catch (error) {
       return error.message;
     }
@@ -32,6 +32,13 @@ class UserService {
       return error.message;
     }
   };
+  update = async (filter, update, options) => {
+    try {
+        return await usersModel.findOneAndUpdate(filter, update, options);
+    } catch (err) {
+        return err.message;
+    };
+};
 
   delete = async (firstName, lastName, email, password) => {
     try {

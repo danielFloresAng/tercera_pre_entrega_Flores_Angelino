@@ -1,4 +1,4 @@
-import CartService from "../services/carts.dao";
+import CartService from '../services/carts.dao.js'
 
 const service = new CartService();
 

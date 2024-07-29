@@ -50,7 +50,8 @@ const initializePassport = () => {
     "github",
     new GitHubStrategy(
       {
-        clientID: config.GITHUB_CLIENT_ID,
+        // clientID: config.GITHUB_CLIENT_ID,
+        clientID: 'sdfsd23r',
         clientSecret: config.GITHUB_CLIENT_SECRET,
         callbackURL: config.GITHUB_CALLBACK_URL,
       },
@@ -101,9 +102,12 @@ const initializePassport = () => {
     done(null, user._id);
   });
 
-  passport.deserializeUser((user, done) => {
-    let user = userManager.get;
-    done(null, user);
+  passport.deserializeUser(async (user, done) => {
+try{
+done(null, manager.getUserById(user._id))
+}catch(error){
+done(error.message)
+}
   });
 };
 

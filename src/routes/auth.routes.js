@@ -5,7 +5,7 @@ import {
   generateToken,
   authThoken,
   passportCall,
-  authorization,
+  // authorization,
   handlePolicies,
 } from "../services/utils.js";
 import { createHash } from "../services/utils.js";
@@ -89,7 +89,7 @@ router.get(
   "/currentJwt",
   authThoken,
   passportCall("jwt"),
-  authorization("user"),
+  // authorization("user"),
   async (req, res) => {
     try {
       res.status(200).send({ status: "Ingreso exitoso", playload: req.user });
