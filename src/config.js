@@ -2,18 +2,21 @@ import * as url from "url";
 import { Command } from "commander";
 import dotenv from "dotenv";
 
+//Comandos
 const program = new Command();
 
+// console.log(process.argv)
+
 program.option("--mode <mode>").option("--port <port>");
-
 program.parse();
-
 const programOpts = program.opts();
-// dotenv.config();
+
+//Variables de entorno
 dotenv.config({
   path: programOpts.mode === ".env.prod" ? ".env.prod" : ".env.devel",
 });
 
+//Objeto config
 const config = {
   PORT: programOpts.port || 8000,
   SERVER: "Local",
