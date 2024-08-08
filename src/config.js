@@ -2,19 +2,15 @@ import * as url from "url";
 import { Command } from "commander";
 import dotenv from "dotenv";
 
-//Comandos
+//Parseo de opciones de línea de comandos
 const program = new Command();
-
-// console.log(process.argv)
 
 program.option("--mode <mode>").option("--port <port>");
 program.parse();
 const programOpts = program.opts();
 
-//Variables de entorno
-dotenv.config({
-  path: programOpts.mode === ".env.prod" ? ".env.prod" : ".env.devel",
-});
+//Parseo de variables de entorno
+dotenv.config();
 
 //Objeto config
 const config = {
@@ -27,14 +23,10 @@ const config = {
   MONGODB_URI:
     "mongodb+srv://danns1125:E-commerce@e-commerce-coder.ksbwadq.mongodb.net/ecommerce",
   MONGODB_ID_REGEX: /^[a-fA-F0-9]{24}$/,
-  SECRET: "e-commerce_Mdb_1ld0sd" || process.env.SECRET,
-  GITHUB_CLIENT_SECRET:
-    "59ee4df3e66e9f95c608086e7c74e091db0a84ca" ||
-    process.env.GITHUB_CLIENT_SECRET,
-  GITHUB_CLIENT_ID: "Iv23lirfI6qp3cYBKkMg" || process.env.GITHUB_CLIENT_ID,
-  GITHUB_CALLBACK_URL:
-    "http://localhost:8080/api/sessions/ghlogincallback" ||
-    process.env.GITHUB_CALLBACK_URL,
+  SECRET: process.env.SECRET,
+  GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
+  GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
+  GITHUB_CALLBACK_URL: process.env.GITHUB_CALLBACK_URL,
 
   /*
   SECRET=e-commerce_Mdb_1ld0sd
