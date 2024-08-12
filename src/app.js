@@ -26,7 +26,7 @@ const httpInstance = app.listen(config.PORT, async () => {
 console.log(
   `Servidor funcionando en puerto ${config.PORT} conectada a ${config.SERVER}. PID ${process.pid}`
 );
-console.log(config.SECRET);
+
 const socketServer = socketInit(httpInstance);
 
 app.set("socketServer", socketServer);
@@ -62,3 +62,6 @@ app.use("/api/sessions", sessionsRouter);
 app.use("/api/auth", authsRouter);
 app.use("/api/base", baseRouter);
 app.use("/static", express.static(`${config.DIRNAME}/public`));
+
+
+//01.28.00

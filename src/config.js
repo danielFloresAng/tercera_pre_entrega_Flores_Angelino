@@ -1,6 +1,7 @@
 import * as url from "url";
 import { Command } from "commander";
 import dotenv from "dotenv";
+import path from "path";
 
 //Parseo de opciones de línea de comandos
 const program = new Command();
@@ -10,7 +11,10 @@ program.parse();
 const programOpts = program.opts();
 
 //Parseo de variables de entorno
-dotenv.config();
+
+dotenv.config({
+  path: programOpts.mode === "prod" ? ".env.prod" : ".env.devel",
+});
 
 //Objeto config
 const config = {
